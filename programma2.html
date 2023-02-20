@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<pre>import random
+import time
+
+
+def begin(alle_mogelijkheden: list, mogelijkheden: dict, gebruikt: dict, punten: int):
+    time.sleep(1)
+    if alle_mogelijkheden:
+        print('Dit zijn alle mogelijkheden:\n')
+        for key, value in mogelijkheden.items():
+            print(key, ':', value)
+
+        time.sleep(1)
+        print('\n\nDit zijn de opties die je nog kan kiezen:')
+        for alles in alle_mogelijkheden:
+            print(alles)
+
+        time.sleep(1)
+        print('\nHier komt de dobbelsteen:\n')
+        return True
+
+    else:
+        for value in gebruikt.values():
+            punten += value
+        print('Je hebt alle mogelijkheden gebruikt.')
+        if gebruikt['Een'] and gebruikt['Twee'] and gebruikt['Drie'] and gebruikt['Vier'] and gebruikt['Vijf'] and \
+                gebruikt[
+                    'Zes'] >= 63:
+            print('Bonus: 35 punten')
+            punten += 35
+            print('Je hebt {} punten behaald.'.format(punten))
+        else:
+            print('Je hebt {} punten behaald.'.format(punten))
+        print('Dit zijn je aantal punten voor elke categorie:')
+        for key, value in gebruikt.items():
+            print(key, ':', value)
+        return False
+
+
+def welkeKeuze(opties: dict, gebruikt: dict, alle_mogelijkheden: list, punten: int, chance: int, aantalGooien: int,
+               gooien: list):
+    opnieuw = True
+    while opnieuw:
+
+        watDoen = input(
+            "Wat wil je doen? Type de gehele naam van de optie of type 'opnieuw' om nog eens te dobbelen: ").lower()
+        if watDoen.capitalize() in opties:
+            print('Je hebt gekozen voor', watDoen, 'met', opties[watDoen.capitalize()], 'punten.\n')
+            time.sleep(2)
+            gebruikt[watDoen.capitalize()] = opties[watDoen.capitalize()]
+            punten += opties[watDoen.capitalize()]
+            alle_mogelijkheden.pop(alle_mogelijkheden.index(watDoen.capitalize()))
+            opties.clear()
+            aantalGooien = 0
+            return opties, gebruikt, alle_mogelijkheden, punten, aantalGooien, gooien
+
+        elif watDoen == 'chance':
+            if watDoen.capitalize() in opties:
+                if chance >= 1:
+                    time.sleep(1)
+                    print('Je hebt al een keer chance gebruikt.')
+                    time.sleep(1)
+                    opnieuw = True
+
+                else:
+                    print('Je hebt gekozen voor', watDoen, 'met', opties[watDoen.capitalize()], 'punten.')
+                    time.sleep(2)
+                    gebruikt[watDoen.capitalize()] = opties[watDoen.capitalize()]
+                    punten += opties[watDoen.capitalize()]
+                    alle_mogelijkheden.pop(alle_mogelijkheden.index(watDoen.capitalize()))
+                    opties.clear()
+                    aantalGooien = 0
+                    return opties, gebruikt, alle_mogelijkheden, punten, aantalGooien, gooien
+
+            else:
+                print('Dit is geen geldige optie.')
+                opnieuw = True
+
+        elif watDoen == 'opnieuw' or watDoen == 'o':
+
+            if aantalGooien == 2:
+                if streep():
+
+                    optie = True
+                    while optie:
+
+                        print('\n'.join(alle_mogelijkheden))
+                        watweg = input('Wat wil je wegstrepen? Type de gehele naam van de optie: ').lower()
+                        if watweg.capitalize() in alle_mogelijkheden:
+                            alle_mogelijkheden.pop(alle_mogelijkheden.index(watweg.capitalize()))
+                            gebruikt[watweg.capitalize()] = 0
+                            aantalGooien = 0
+                            print('')
+                            return opties, gebruikt, alle_mogelijkheden, punten, aantalGooien, gooien, aantalGooien
+
+                        else:
+                            print('Dat is geen optie.')
+                            optie = True
+
+                else:
+                    for key, value in opties.items():
+                        print(key, ':', value)
+                    opnieuw = True
+            else:
+                time.sleep(1)
+                return 'Kiezen'
+
+        else:
+            print('Je hebt geen geldige optie gekozen.')
+
+
+def meest_voorkomend(gooi):
+    return max(set(gooi), key=gooi.count)
+
+
+def dobbelsteen():
+    gooien = []
+    for index in range(5):
+        gooi = random.randint(1, 6)
+        gooien.append(gooi)
+    print('')
+    print('Je worp:', ', '.join(map(str, sorted(gooien))))
+    return gooien
+
+
+def tel_stenen(gooi: list):
+    dice_count = [0, 0, 0, 0, 0, 0]
+    for die in gooi:
+        dice_count[die - 1] += 1
+    return dice_count
+
+
+def enkeleOpnieuw(gooi: list, alle_mogelijkheden: list):
+    last = 0
+    repeat = True
+    while repeat:
+        try:
+            print("\nVoorbeeld: 12345\nVoorbeeld: 35")
+            print("Je worp: ", ', '.join(map(str, sorted(gooi))))
+            bewaren = [int(x) for x in input("Welke dobbelstenen wil je opnieuw gooien?? (1-6, 0 voor allemaal: ")]
+            if 0 in bewaren:
+                for index in range(5):
+                    gooi[index] = random.randint(1, 6)
+                print("Je nieuwe worp: ", ', '.join(map(str, sorted(gooi))))
+                print('')
+                print('Dit zijn ongebruikte mogelijkheden:')
+                time.sleep(1)
+                for alles in alle_mogelijkheden:
+                    print(alles)
+                print('')
+                time.sleep(2)
+                return gooi
+
+            else:
+                for bewaar in bewaren:
+                    for index in range(5):
+                        if bewaar == gooi[index]:
+                            if last == bewaar:
+                                pass
+                            else:
+                                gooi[index] = random.randint(1, 6)
+                                last = bewaar
+
+            time.sleep(0.5)
+            print("Je nieuwe worp: ", ', '.join(map(str, sorted(gooi))))
+            print('')
+            time.sleep(1)
+            print('Dit zijn ongebruikte mogelijkheden:')
+            time.sleep(1)
+            for alles in alle_mogelijkheden:
+                print(alles)
+            print('')
+            time.sleep(2)
+            return gooi
+
+        except ValueError:
+            print('Voer een getal in.')
+            repeat = True
+
+
+def streep():
+    rep = True
+    while rep:
+        print('Je hebt al 3 keer gegooid. Je moet iets afstrepen of kiezen.\n')
+        KiesofStreep = input('Wil je iets afstrepen of een optie kiezen? (A/O): ').lower()
+
+        if KiesofStreep == 'o':
+            return False
+        elif KiesofStreep == 'a':
+            return True
+        else:
+            print('Voer een geldige optie in.')
+            rep = True
+
+
+def checking(gooien: list, opties: dict, gebruikt: dict, chance: int):
+    if een(gooien):
+        if 'Een' in gebruikt:
+            pass
+        else:
+            opties['Een'] = sum(1 for x in gooien if x == 1)
+
+    if twee(gooien):
+        if 'Twee' in gebruikt:
+            pass
+        else:
+            opties['Twee'] = sum(2 for x in gooien if x == 2)
+
+    if drie(gooien):
+        if 'Drie' in gebruikt:
+            pass
+        else:
+            opties['Drie'] = sum(3 for x in gooien if x == 3)
+
+    if vier(gooien):
+        if 'Vier' in gebruikt:
+            pass
+        else:
+            opties['Vier'] = sum(4 for x in gooien if x == 4)
+    if vijf(gooien):
+        if 'Vijf' in gebruikt:
+            pass
+        else:
+            opties['Vijf'] = sum(5 for x in gooien if x == 5)
+
+    if zes(gooien):
+        if 'Zes' in gebruikt:
+            pass
+        else:
+            opties['Zes'] = sum(6 for x in gooien if x == 6)
+
+    if drie_van_een_soort(gooien):
+        if 'Drie van een soort' in gebruikt:
+            pass
+        else:
+            opties['Drie van een soort'] = meest_voorkomend(gooien) * 3 + sum(
+                x for x in gooien if x != meest_voorkomend(gooien))
+
+    if vier_van_een_soort(gooien):
+        if 'Vier van een soort' in gebruikt:
+            pass
+        else:
+            opties['Vier van een soort'] = meest_voorkomend(gooien) * 4 + sum(
+                x for x in gooien if x != meest_voorkomend(gooien))
+
+    if full_house(gooien):
+        if 'Full house' in gebruikt:
+            pass
+        else:
+            opties['Full house'] = 25
+
+    if kleine_straat(gooien):
+        if 'Kleine straat' in gebruikt:
+            pass
+        else:
+            opties['Kleine straat'] = 30
+
+    if grote_straat(gooien):
+        if 'Grote straat' in gebruikt:
+            pass
+        else:
+            opties['Grote straat'] = 40
+
+    if yahtzee(gooien):
+        if 'Yahtzee' in gebruikt:
+            pass
+        else:
+            opties['Yahtzee'] = 50
+
+    if 'Chance' in gebruikt:
+        pass
+    else:
+        opties['Chance'] = sum(gooien)
+
+    return opties, gebruikt, chance
+
+
+def een(gooi: list):
+    if 1 in gooi:
+        return True
+    else:
+        return False
+
+
+def twee(gooi: list):
+    if 2 in gooi:
+        return True
+    else:
+        return False
+
+
+def drie(gooi: list):
+    if 3 in gooi:
+        return True
+    else:
+        return False
+
+
+def vier(gooi: list):
+    if 4 in gooi:
+        return True
+    else:
+        return False
+
+
+def vijf(gooi: list):
+    if 5 in gooi:
+        return True
+    else:
+        return False
+
+
+def zes(gooi: list):
+    if 6 in gooi:
+        return True
+    else:
+        return False
+
+
+def drie_van_een_soort(gooi: list):
+    stenen = tel_stenen(gooi)
+    if max(stenen) >= 3:
+        return True
+    else:
+        return False
+
+
+def vier_van_een_soort(gooi: list):
+    stenen = tel_stenen(gooi)
+    if max(stenen) >= 4:
+        return True
+    else:
+        return False
+
+
+def full_house(gooi: list):
+    count = [0, 0, 0, 0, 0, 0, 0]
+
+    for i in gooi:
+        count[i] += 1
+
+    if 2 in count and 3 in count:
+        return True
+    else:
+        return False
+
+
+def kleine_straat(gooi: list):
+    stenen = tel_stenen(gooi)
+    if all(stenen[0:4]) or all(stenen[1:5]):
+        return True
+    elif all(stenen[2:6]):
+        return True
+    else:
+        return False
+
+
+def grote_straat(gooi: list):
+    stenen = tel_stenen(gooi)
+    if all(stenen[0:5]) or all(stenen[1:6]):
+        return True
+    else:
+        return False
+
+
+def yahtzee(gooi):
+    stenen = tel_stenen(gooi)
+    if max(stenen) >= 5:
+        return True
+    else:
+        return False
+
+Hierboven staan alle functies.
+################################################################################
+Hieronder staat de flow
+
+mogelijkheden = {'Een': 'Aantal enen.',
+                 'Twee': 'Aantal tweeën.',
+                 'Drie': 'Aantal drieën.',
+                 'Vier': 'Aantal vieren.',
+                 'Vijf': 'Aantal vijven.',
+                 'Zes': 'Aantal zessen.',
+                 'Drie van een soort': 'Drie van een soort.',
+                 'Vier van een soort': 'Vier van een soort.',
+                 'Full house': 25,
+                 'Kleine straat': 30,
+                 'Grote straat': 40,
+                 'Yahtzee': 50,
+                 'Chance': 'Totaal antal ogen.', }
+alle_mogelijkheden = list(mogelijkheden.keys())
+opties = {}
+gebruikt = {}
+chance = 0
+punten = 0
+aantalGooien = 0
+gooien = sorted([])
+
+opnieuw = True
+while opnieuw:
+
+    intro = begin(alle_mogelijkheden, mogelijkheden, gebruikt, punten)
+    if intro:
+        gooien = dobbelsteen()
+    else:
+        quit()
+
+    enkelopnieuw = True
+    while enkelopnieuw:
+
+        ###############################################################################################
+        checking(gooien, opties, gebruikt, chance)
+        ###############################################################################################
+        for key, value in opties.items():
+            print(key, ':', value)
+
+        keuze = welkeKeuze(opties, gebruikt, alle_mogelijkheden, punten, chance, aantalGooien, gooien)
+        if keuze == 'Kiezen':
+            opties.clear()
+            aantalGooien += 1
+            gooien = enkeleOpnieuw(gooien, alle_mogelijkheden)
+            print("Je worp: ", ', '.join(map(str, sorted(gooien))))
+            enkelopnieuw = True
+        else:
+            aantalGooien = 0
+            break</pre>
+
+</body>
+</html>

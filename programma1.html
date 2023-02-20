@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Programma 1</title>
+    <link href="css.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<pre>import time
+
+
+def intro():
+    print('Welkom bij Papi Gelato')
+
+
+def klaar():
+    time.sleep(1)
+    print('\nBedankt en tot ziens!')
+
+
+def error():
+    print("\nSorry dat is geen optie die we aanbieden...")
+
+
+def teveel():
+    print("\nSorry, zulke grote bakken hebben we niet..")
+
+
+def teweinig():
+    print("\nSorry, dat is te weinig voor ons..")
+
+
+def zakelijkofparticulier():
+    time.sleep(1)
+    rep = True
+    while rep:
+        print('A: Particulier\nB: Zakelijk')
+        keuze = input('Bent u een particuliere of een zakelijke klant?: ').lower()
+        if keuze in ['a', 'b', 'p', 'z', 'zakelijk', 'particulier']:
+            if keuze == 'a' or keuze == 'p':
+                return 'Particulier'
+
+            elif keuze == 'b' or keuze == 'z':
+                return 'Zakelijk'
+
+            else:
+                return keuze.capitalize()
+        else:
+            error()
+            rep = True
+
+
+def meerbestellen():
+    rep = True
+    while rep:
+        jaOFnee = input('\nWilt u nog meer bestellen?: ').lower()
+        if jaOFnee == 'ja' or jaOFnee == 'j':
+            return True
+
+        elif jaOFnee == 'nee' or jaOFnee == 'n':
+            return False
+
+        else:
+            error()
+            rep = True
+
+
+def get_smaken(count: int, zakofpart=str):
+    rep = True
+    while rep:
+
+        print('A: Aardbei\nC: Chocolade\nV: Vanille')
+        if zakofpart == 'liter':
+            print('Prijs per liter incl. BTW kost €9.80')
+        else:
+            print('Prijs per bolletje kost €0.95')
+
+        smaak = input(f'Welke smaak wilt u voor {zakofpart} {count}?: ').lower()
+
+        if smaak in ['a', 'c', 'v', 'aardbij', 'chocolade', 'chocola', 'vanille']:
+            if smaak == 'a':
+                return 'Aardbei'
+            elif smaak == 'c':
+                return 'Chocolade'
+
+            elif smaak == 'v':
+                return 'Vanille'
+
+            elif smaak == 'chocola':
+                return 'Chocolade'
+
+            else:
+                return smaak.capitalize()
+        else:
+            error()
+            rep = True
+
+
+def get_topping():
+    rep = True
+    while rep:
+        print(
+            f'A: Geen                 €0'
+            f'\nB: Slagroom             €0.50'
+            f'\nC: Sprinkels            €0.30 per bol'
+            f'\nD: Caramel saus         hoorntje: €0.60\n'
+            '                        bakje: €0.90')
+        topping = input('\nWat voor topping wilt u?: ').lower()
+
+        if topping in ['a', 'b', 'c', 'd', 'geen', 'slagroom', 'sprinkels', 'caramel saus']:
+            if topping == 'a':
+                print('U heeft geen topping gekozen.')
+                return 'Geen'
+
+            elif topping == 'b':
+                print('U heeft slagroom gekozen.')
+                return 'Slagroom'
+
+            elif topping == 'c':
+                print('U heeft sprinkels gekozen.')
+                return 'Sprinkels'
+
+            elif topping == 'd':
+                print('U heeft caramel saus gekozen.')
+                return 'Caramel saus'
+
+            else:
+                return topping.capitalize()
+
+        else:
+            error()
+            rep = True
+
+
+def get_bolletjes(zakofpart=bool):
+    repeat = True
+    while repeat:
+        try:
+            if zakofpart == True:
+                hoeveelLiter = int(input('Hoeveel Liter wilt u?: '))
+                if hoeveelLiter < 1:
+                    teweinig()
+                    repeat = True
+                elif hoeveelLiter > 100:
+                    teveel()
+                    repeat = True
+                else:
+                    return hoeveelLiter
+            else:
+                hoeveelBollen = int(input("Hoeveel bolletjes wilt u?: "))
+                if hoeveelBollen <= 0:
+                    teweinig()
+                    repeat = True
+
+                elif hoeveelBollen >= 1 and hoeveelBollen <= 8:
+                    return hoeveelBollen
+
+                else:
+                    teveel()
+                    repeat = True
+
+        except:
+            error()
+            repeat = True
+
+
+def bakofhoorn(hoeveel: int):
+    if 4 <= hoeveel <= 8:
+        return 'bakje'.lower()
+
+    else:
+        rep = True
+        while rep:
+            keuzeBH = input(f'Wilt u deze {hoeveel} bollejte(s) in een hoorntje of bakje?: ')
+            if keuzeBH.lower() == 'bakje':
+                return keuzeBH
+
+            elif keuzeBH.lower() == 'hoorn' or keuzeBH.lower() == 'hoorntje':
+                return keuzeBH
+
+            else:
+                error()
+                rep = True
+
+
+def bonnetje(hoeveel: int, prijsbolletje: float, verpakkingen: list, prijsHoorn: float, prijsBakje: float,
+             smaken: list, toppings: int, zakofpart: bool):
+    hoorn = 0
+    bakje = 0
+    aantalsmaken = {}
+
+    totaalmult = hoeveel * prijsbolletje + toppings + hoorn * prijsHoorn + bakje * prijsBakje
+    totaalhoorn = hoeveel * prijsbolletje + toppings + 1 * prijsHoorn
+    totaalbak = hoeveel * prijsbolletje + toppings + 1 * prijsBakje
+    totaalzakelijk = hoeveel * 9.80
+    totaalBTW = 0
+
+    for smaak in smaken:
+        if smaak in aantalsmaken:
+            aantalsmaken[smaak] += 1
+        else:
+            aantalsmaken[smaak] = 1
+
+    ##############################################################################################################
+    # ZAKELIJK
+    ##############################################################################################################
+    for k, v in aantalsmaken.items():
+        if k[v] != 0:
+            totaalBTW += v
+
+    if zakofpart == True:
+        for key, value in aantalsmaken.items():
+            if key[value] != 0:
+                print(f'L.{key:<{10}}:     {value} x €9.80       = €{(value * 9.80):.2f}')
+        print('                                  -------')
+        print(f'Totaal      :                     = €{totaalzakelijk:.2f}')
+        print(f'BTW (6%)    :                     = €{totaalBTW:.2f}')
+    ##############################################################################################################
+    # ZAKELIJK
+    ##############################################################################################################
+
+    else:
+
+        if len(verpakkingen) > 1:
+            for i in range(len(verpakkingen)):
+                if verpakkingen[i] == 'hoorn' or verpakkingen[i] == 'hoorntje':
+                    hoorn += 1
+                else:
+                    bakje += 1
+
+            for key, value in aantalsmaken.items():
+                if key[value] != 0:
+                    print(f'B.{key:<{10}}:     {value} x {prijsbolletje:.2f}       = €{value * prijsbolletje:.2f}')
+
+            print(f'Hoorntjes   :     {hoorn} x {prijsHoorn:.2f}      = €{hoorn * prijsHoorn:.2f}')
+            print(f"Bakjes      :     1 x {prijsBakje:.2f}      = €{prijsBakje:.2f}")
+            print(f'Toppings    :                   = €{toppings:.2f}')
+            print('                                -------')
+            print(f'Totaal      :                   = €{totaalmult:.2f}')
+
+
+        elif verpakkingen[0] == 'hoorn' or verpakkingen[0] == 'hoorntje':
+
+            for key, value in aantalsmaken.items():
+                if key[value] != 0:
+                    print(f'B.{key:<{10}}:     {value} x {prijsbolletje:.2f}       = €{value * prijsbolletje:.2f}')
+
+            print(f'Hoorntjes   :     1 x {prijsHoorn:.2f}       = €{prijsHoorn:.2f}')
+            print(f'Toppings    :                   = €{toppings:.2f}')
+            print('                                -------')
+            print(f'Totaal      :                   = €{totaalhoorn:.2f}')
+
+
+        elif verpakkingen[0] == 'bakje':
+            ################################################################################################
+            for key, value in aantalsmaken.items():
+                if key[value] != 0:
+                    print(f'B.{key:<{10}}:     {value} x {prijsbolletje:.2f}       = €{(value * prijsbolletje):.2f}')
+            ################################################################################################
+            print(f"Bakjes      :     1 x {prijsBakje}       = €{prijsBakje:.2f}")
+            print(f'Toppings    :                    = €{toppings:.2f}')
+            print('                                 -------')
+            print(f'Totaal:                          = €{totaalbak:.2f}')
+
+Hierboven staan de functies.
+############################################################################################################
+Hieronder is de flow, natuurlijk in een apart bestand.
+
+bolletjePrijs = 0.95
+horentjePrijs = 1.25
+bakjePrijs = 0.75
+smaakCount = 1
+
+amountBollen = 0
+
+verpakkingen = []
+smaken = []
+prijsToppings = 0
+intro()
+
+rep = True
+while rep:
+    zakofpart = zakelijkofparticulier()
+    if zakofpart == 'Zakelijk':
+        hoeveel = get_bolletjes(True)
+        for index in range(hoeveel):
+            smaak = get_smaken(smaakCount, 'liter')
+            smaken.append(smaak)
+            smaakCount += 1
+
+        print(f'{"Papi Gelato":^50}')
+        bonnetje(hoeveel, bolletjePrijs, verpakkingen, horentjePrijs, bakjePrijs, smaken, prijsToppings, True)
+        print(f'{"Papi Gelato":^50}')
+        rep = False
+
+    else:
+        hoeveel = get_bolletjes(False)
+        for index in range(hoeveel):
+            smaak = get_smaken(smaakCount, 'bolletje')
+            smaken.append(smaak)
+            smaakCount += 1
+        smaakCount = 1
+
+        verpakking = bakofhoorn(hoeveel)
+
+        topping = get_topping()
+
+        if topping == 'Caramel saus' and verpakking == 'hoorntje' or verpakking == 'hoorn':
+            prijsToppings += 0.60
+
+        elif topping == 'Caramel saus' and verpakking == 'bakje':
+            prijsToppings += 0.90
+
+        elif topping == 'Slagroom':
+            prijsToppings += 0.50
+
+        elif topping == 'Sprinkels':
+            prijsToppings += hoeveel * 0.30
+
+        else:
+            pass
+
+        if topping == 'Geen':
+            print(f'Hier is uw {verpakking} met {hoeveel} bolletjes.')
+        else:
+            print(f'Hier is uw {verpakking}, {hoeveel} bolletjes met {topping}.')
+
+        if meerbestellen():
+            verpakkingen.append(verpakking)
+            amountBollen += hoeveel
+            rep = True
+
+        else:
+            rep = False
+            verpakkingen.append(verpakking)
+            amountBollen += hoeveel
+            print(f'{"Papi Gelato":^50}')
+            bonnetje(amountBollen, bolletjePrijs, verpakkingen, horentjePrijs, bakjePrijs, smaken, prijsToppings, False)
+            print(f'{"Papi Gelato":^50}')</pre>
+
+
+</body>
+</html>
